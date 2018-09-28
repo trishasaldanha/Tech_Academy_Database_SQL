@@ -354,10 +354,12 @@ WHERE BookTitle = 'The Lost Tribe'
 
 CREATE PROC dbo.queryThree
 AS
-SELECT Name
+SELECT Name, COUNT(a2.CardNo)
 FROM borrower a1
 INNER JOIN book_loans a2 ON a2.CardNo = a1.CardNo
-WHERE 
+WHERE DateDue BETWEEN '2018-09-27' AND '2018-12-31'
+GROUP BY Name
+HAVING COUNT(a2.CardNo) = 0
 ;
 
 CREATE PROC dbo.queryFour
