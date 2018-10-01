@@ -352,14 +352,18 @@ INNER JOIN library_branch a3 ON a3.BranchID = a1.BranchID
 WHERE BookTitle = 'The Lost Tribe'
 ;
 
+INSERT INTO borrower
+(CardNo, Name, BorrowerAddress, BorrowerPhone)
+VALUES
+(10, 'Jessica Forrester', '115 Margate Court', '(540) 678-0789')
+;
+
 CREATE PROC dbo.queryThree
 AS
-SELECT Name, COUNT(a2.CardNo)
+SELECT Name, a2.CardNo
 FROM borrower a1
-INNER JOIN book_loans a2 ON a2.CardNo = a1.CardNo
-WHERE DateDue BETWEEN '2018-09-27' AND '2018-12-31'
-GROUP BY Name
-HAVING COUNT(a2.CardNo) = 0
+LEFT JOIN book_loans a2 ON a2.CardNo = a1.CardNo
+WHERE a2. CardNo IS NULL
 ;
 
 CREATE PROC dbo.queryFour
@@ -385,17 +389,16 @@ AS
 SELECT Name, BorrowerAddress AS 'Address', COUNT(a2.CardNo) AS 'Total Books Borrowed:'
 FROM borrower a1
 INNER JOIN book_loans a2 ON a2.CardNo = a1.CardNo
-WHERE DateDue BETWEEN '2018-09-29' AND '2018-12-31'
 GROUP BY Name, BorrowerAddress
+HAVING COUNT(a2.CardNo) > 5
 ;
 
 CREATE PROC dbo.querySeven
 AS
-SELECT BookTitle, SUM(Number_Of_Copies)
+SELECT BookTitle, Number_Of_Copies
 FROM books a1
 INNER JOIN Book_Copies a2 ON a2.BookID = a1.BookID
 INNER JOIN book_authors a3 ON a3.BookID = a2.BookID
 INNER JOIN library_branch a4 ON a4.BranchID = a2.BranchID
 WHERE BranchName = 'Central' AND AuthorName = 'Stephen King'
-GROUP BY BookTitle
 ;
